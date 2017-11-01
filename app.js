@@ -12,7 +12,7 @@ const bot = new WebClient(bot_token);
 
 let channel;
 let botID;
-const PORT = 8000;
+const PORT = 4309;
 const app = express();
 var request = require('request');
 
@@ -36,11 +36,9 @@ app.listen(PORT, function() {
 
 //make a call to the summarizer API:
 function getSummary(msg, callback) {
-	console.log('Inside get summary');
 	const body = JSON.stringify({
         	text: msg
     });
-    console.log("body", body);
 	var options = {
 		headers: {
             'Content-Type': 'text/plain'
@@ -63,7 +61,6 @@ function getSummary(msg, callback) {
 	        	//dynamic sentence count ~~ neato
 
 	        	var sentenceCount = (body.text.size <= 3) ? body.text.length : Math.ceil(body.text.length / 5);
-	        	console.log(sentenceCount);
 
 	        	var sentences = [];
 	        	for(var s in body.text) {
@@ -72,7 +69,7 @@ function getSummary(msg, callback) {
 	        		}
 	        	}
 
-	            callback(sentences.join(' '), false);
+	            callback(sentences.join(' '), null);
 	        } else {
 	            callback(null, 'Sorry, I didn\'t catch that. Please try again!');
 	        }
@@ -81,17 +78,6 @@ function getSummary(msg, callback) {
 
 }
 
-
-
-/*
-slackEvents.on('reaction_added', (event) => {
-	// Check for white check mark emoji
-	console.log('reaction added')
-});
-
-
-
-*/
 slackEvents.on('message', (event) => {
 
 	let botRef = '<@' + botID + '>';
@@ -111,13 +97,9 @@ slackEvents.on('message', (event) => {
 			}
 		})
 	}
-	// let channel = event.channel;
-	// if (event.thread_ts && event.text.startsWith(trigger)) {
-	// 	// Send message
-	// 	web.chat.postMessage(channel, 'Splash down!', function(err, info) {
-		
-	// 	});
-
-	// }
 });
 
+
+module.exports = {
+	'getSummary': getSummary
+}
