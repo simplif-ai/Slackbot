@@ -57,10 +57,17 @@ function getSummary(msg, callback) {
 	    	var str = 'Summary: ';
 	    	var body = JSON.parse(body);
 
+
 	        if (!error && body.success && response.statusCode == 200) {
 	        	//dynamic sentence count ~~ neato
 
-	        	var sentenceCount = (body.text.size <= 3) ? body.text.length : Math.ceil(body.text.length / 5);
+	        	var sentenceCount = 0;
+
+	        	if (body.text.length <= 3) {
+	        		sentenceCount = body.text.length;
+	        	} else {
+	        		sentenceCount = Math.max(3, Math.ceil(body.text.length / 5));
+	        	}
 
 	        	var sentences = [];
 	        	for(var s in body.text) {
@@ -68,7 +75,7 @@ function getSummary(msg, callback) {
 	        			sentences.push(body.text[s][0]);
 	        		}
 	        	}
-
+	        	
 	            callback(sentences.join(' '), null);
 	        } else {
 	            callback(null, 'Sorry, I didn\'t catch that. Please try again!');
